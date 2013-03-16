@@ -1,0 +1,16 @@
+body          
+{   
+    background-color: #222222; 
+    font-family: monospace; 
+    font: 15 px;
+    color: green; 
+}
+
+div.CodeBlock { margin-left: 2em; }
+
+
+span.Id       { color: lightgreen; }
+span.Key      { color: lightskyblue; }
+span.Lit      { color: wheat; }
+span.Sep      { color: gray; }
+span.Op       { color: lightcoral; }

@@ -1,0 +1,17 @@
+void main(){
+	int a;
+	int b;
+	boolean c,d;
+	a = 10;
+	
+	d = true;
+	c = false;
+	if (d){
+		while(c){
+			 a = a+1;
+			 b = b-a;
+		}	
+	}else {
+		 a = 1;
+	}
+}

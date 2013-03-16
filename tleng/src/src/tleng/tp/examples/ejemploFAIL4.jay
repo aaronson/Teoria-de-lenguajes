@@ -1,0 +1,8 @@
+void main(){
+	int a;
+	int b;
+	if(a+a || a>b && a <= 9){} else;
+	while(!(a = true) && a * b - 1 != 7){
+		b = b && a;
+	}
+}

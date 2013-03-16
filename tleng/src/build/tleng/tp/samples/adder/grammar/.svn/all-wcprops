@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar
+END
+AdderParser.class
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/AdderParser.class
+END
+Token.class
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/Token.class
+END
+TokenMgrError.class
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/TokenMgrError.class
+END
+SimpleCharStream.class
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/SimpleCharStream.class
+END
+AdderParserTokenManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/AdderParserTokenManager.class
+END
+AdderParserConstants.class
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/AdderParserConstants.class
+END
+ParseException.class
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/leanahabedian-tleng/!svn/ver/6/src/build/tleng/tp/samples/adder/grammar/ParseException.class
+END

@@ -1,0 +1,63 @@
+options {
+	STATIC = false ;
+}
+
+PARSER_BEGIN(AdderParser)
+package tleng.tp.samples.adder.grammar;
+public class AdderParser {
+	/*
+	static void main( String[] args ) throws ParseException, TokenMgrError {
+		AdderParser parser = new AdderParser( System.in ) ;
+		parser.Start() ; 
+	}
+	*/
+}
+PARSER_END(AdderParser)
+
+/******************************************************************************
+ * TOKENS                                                                     *
+ ******************************************************************************/
+SKIP : { " " }
+SKIP : { "\n" | "\r" | "\r\n" }
+TOKEN : { < PLUS : "+" > }
+TOKEN : { < NUMBER : (["0"-"9"])+ > }
+
+/******************************************************************************
+ * PRODUCTIONS                                                                *
+ ******************************************************************************/
+int Start() :
+/* Variable declarations */
+{
+	Token token;
+	int i;
+	int value;
+	String texto = "";
+}
+/* start productions */
+{
+	token = <NUMBER> { i = Integer.parseInt(token.image); value = i; texto=texto+i;}
+	(
+		<PLUS>
+		token = <NUMBER> { i = Integer.parseInt(token.image); value = value + i;  texto=texto+"+"+i;}
+	)*
+	<EOF> { System.out.println(texto+"="); return value; }
+}
+
+/*	@NOTA
+	La Produccion es de la forma: 
+	Start -> <NUMBER>(<PLUS><NUMBER>)*<EOF>
+	
+	Sin atributos se escribe asi:
+void Start() :
+{} //Sin variables
+{
+	<NUMBER>
+	(
+		<PLUS>
+		<NUMBER>
+	)*
+	<EOF>
+}
+	En el ejemplo final queda con atributos y codigo.
+	Similar a las TDS que vimos en clase.				
+*/

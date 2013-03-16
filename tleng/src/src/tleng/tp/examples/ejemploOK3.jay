@@ -1,0 +1,10 @@
+void main(){
+	int a;
+	int b;
+	if(a+a || a>b && a <= 9){} else;
+	while(!(a == true) && a * b - 1 != 7){
+		while (b == a){if (a == b){	if (b + a) {while (true){ ;};};};};}
+					
+					
+
+}

@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar
+END
+Token.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/Token.java
+END
+TokenMgrError.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/TokenMgrError.java
+END
+SimpleCharStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/SimpleCharStream.java
+END
+AdderParserTokenManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/AdderParserTokenManager.java
+END
+AdderParserConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/AdderParserConstants.java
+END
+ParseException.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/ParseException.java
+END
+AdderParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/leanahabedian-tleng/!svn/ver/6/src/src/tleng/tp/samples/adder/grammar/AdderParser.java
+END

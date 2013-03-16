@@ -1,0 +1,160 @@
+\section{Resolución}
+
+Analizando las gramaticas del lenguaje Jay dada por la catedra y el funcionamiento de las herramientas propuestas, 
+pudimos observar que la gramatica no era $LL(1)$ debido a que tenía recursión a izquierda principalmente.
+Lo que decidimos hacer entonces es utilizar la herramienta $JavaCC$ que si bien solo funciona para gramaticas
+$ELL$ con un pequeño pasaje donde agregaremos los simbolos $^*$, $^+$ y $?$, podremos obtener facilmente la
+gramatica $ELL$ deseada.
+
+\subsection{Transformación de la gramática del lexer}
+
+Dados los siguientes componentes léxicos de Jay:
+
+\noindent$InputElement$ $\rightarrow$ $WhiteSpace$ | $Comment$ | $Token$ \\
+$WhiteSpace$ $\rightarrow$ {\bf space} | $\backslash$ t | $\backslash$r | $\backslash$n | $\backslash$f | $\backslash$r$\backslash$n \\
+$Comment$ $\rightarrow$ // any string ended by $\backslash$r or $\backslash$n or $\backslash$r$\backslash$n \\
+$Token$ $\rightarrow$ $Identifier$ | $Keyword$ | $Literal$ | $Separator$ | $Operator$ \\
+$Identifier$ $\rightarrow$ $Letter$ | $Identifier$$Letter$ | $Identifier$$Digit$ \\
+$Letter$ $\rightarrow$ a | b | ... | z | A | B | ... | Z \\
+$Digit$ $\rightarrow$ 0 | 1 | 2 | ... | 9 \\
+$Keyword$ $\rightarrow$ {\bf boolean} | {\bf else} | {\bf if} | {\bf int} | {\bf main} | {\bf void} | {\bf while} \\
+$Literal$ $\rightarrow$ $Boolean$ | $Integer$ \\ 
+$Boolean$ $\rightarrow$ {\bf true} | {\bf false}\\
+$Integer$ $\rightarrow$ $Digit$ | $Integer$$Digit$ \\
+$Separator$ $\rightarrow$ {\bf (|)} | {\bf\{|\}} | {\bf;} | {\bf,}\\
+$Operator$ $\rightarrow$ {\bf =} | {\bf  +} | {\bf -} | {\bf *} | {\bf /} | {\bf <} | {\bf <= } | {\bf> } |
+
+\hspace{1.5cm}|{\bf >=} | {\bf ==} | {\bf !=} | {\bf \&\&} | {\bf ||} | {\bf !}\\
+
+Los reescribiremos de la siguiente manera:
+
+\noindent$InputElement$ $\rightarrow$ $WhiteSpace$ | $Comment$ | $Token$ \\
+$WhiteSpace$ $\rightarrow$ {\bf space} | $\backslash$ t | $\backslash$r | $\backslash$n | $\backslash$f | $\backslash$r$\backslash$n \\
+$Comment$ $\rightarrow$ //.*\$ \\
+$Token$ $\rightarrow$ $Identifier$ | $Keyword$ | $Literal$ | $Separator$ | $Operator$ \\
+$Identifier$ $\rightarrow$ $Letter$ | $Identifier$$Letter$ | $Identifier$$Digit$ \\
+$Letter$ $\rightarrow$ [a-zA-Z]\\
+$Digit$ $\rightarrow$ [0-9] \\
+$Keyword$ $\rightarrow$ {\bf boolean} | {\bf else} | {\bf if} | {\bf int} | {\bf main} | {\bf void} | {\bf while} \\
+$Literal$ $\rightarrow$ $Boolean$ | $Integer$ \\ 
+$Boolean$ $\rightarrow$ {\bf true} | {\bf false}\\
+$Integer$ $\rightarrow$ $Digit$ | $Integer$$Digit$ \\
+$Separator$ $\rightarrow$ {\bf (|)} | {\bf\{|\}} | {\bf;} | {\bf,}\\
+$Operator$ $\rightarrow$ {\bf =} | {\bf  +} | {\bf -} | {\bf *} | {\bf /} | {\bf <} | {\bf <= } | {\bf> } |
+
+\hspace{1.5cm}              | {\bf >=} | {\bf ==} | {\bf !=} | {\bf \&\&} | {\bf ||} | {\bf !}\\
+
+
+Luego eliminamos las recursiones usando $^{*}$ o $^{+}$ y factorizamos utilizando $?$ entonces Integer va a ser:
+
+\noindent$Integer$ $\rightarrow$ $[0-9]^{+}$ \\
+$Identifier$ $\rightarrow$ $[a-zA-Z][a-zA-Z0-9]^{*}$ \\
+$Operator$ $\rightarrow$ {\bf =}({\bf =})? | {\bf  +} | {\bf -} | {\bf *} | {\bf /} | {\bf <}({\bf =})$?$ |
+
+\hspace{1.5cm}              | {\bf >}({\bf =})$?$ | {\bf !}({\bf =})? | {\bf \&\&} | {\bf ||}\\
+
+
+Quedando la siguiente gramatica
+
+\noindent$InputElement$ $\rightarrow$ $WhiteSpace$ | $Comment$ | $Token$ \\
+$WhiteSpace$ $\rightarrow$ {\bf space} | $\backslash$ t | $\backslash$r | $\backslash$n | $\backslash$f | $\backslash$r$\backslash$n \\
+$Comment$ $\rightarrow$ //.*\$ \\
+$Token$ $\rightarrow$ $Identifier$ | $Keyword$ | $Literal$ | $Separator$ | $Operator$ \\
+$Identifier$ $\rightarrow$ $[a-zA-Z]([a-zA-Z0-9])^{*}$ \\
+$Keyword$ $\rightarrow$ {\bf boolean} | {\bf else} | {\bf if} | {\bf int} | {\bf main} | {\bf void} | {\bf while} \\
+$Literal$ $\rightarrow$ $Boolean$ | $Integer$ \\ 
+$Boolean$ $\rightarrow$ {\bf true} | {\bf false}\\
+$Integer$ $\rightarrow$ $[0-9]^{+}$ \\
+$Separator$ $\rightarrow$ {\bf (|)} | {\bf\{|\}} | {\bf;} | {\bf,}\\
+$Operator$ $\rightarrow$ {\bf =}({\bf =})? | {\bf  +} | {\bf -} | {\bf *} | {\bf /} | {\bf <}({\bf =})$?$ |
+
+\hspace{1.5cm}              | {\bf >}({\bf =})$?$ | {\bf !}({\bf =})? | {\bf \&\&} | {\bf ||}\\
+
+
+\subsection{Transformación de la gramatica de la sintaxis de Jay}
+
+
+La idea ahora es realizar la misma acción para la gramática que define la sintaxis de Jay:
+
+\noindent$Program$ $\rightarrow$ {\bf void main ( )} {\bf \{}$Declarations$ $Statements${\bf \} } \\
+$Declarations$ $\rightarrow$ $\lambda$ | $Declarations$ $Declaration$\\
+$Declaration$ $\rightarrow$ $Type$ $Indentifiers$ {\bf ;}\\
+$Type$ $\rightarrow$ {\bf int} | {\bf boolean}\\
+$Identifiers$ $\rightarrow$ $Identifier$ | $Identifiers${\bf ,}$Identifier$\\
+$Statements$ $\rightarrow$ $\lambda$ | $Statements$ $Statement$\\
+$Statement$ $\rightarrow$ {\bf ;} | $Block$ | $Assignment$ | $IfStatement$ | $WhileStatement$\\
+$Block$ $\rightarrow$ {\bf \{}$Statements${\bf \}}\\
+$Assignment$ $\rightarrow$ $Identifier$ {\bf =} $Expression$ {\bf ;}\\
+$IfStatement$ $\rightarrow$ {\bf if(} $Expression$ {\bf )} $Statement$ | {\bf if(} $Expression$ {\bf )} $Statement$ {\bf else} $Statement$\\
+$WhileStatement$ $\rightarrow$ {\bf while(}$Expression$ {\bf )} $Statement$\\
+$Expression$ $\rightarrow$ $Conjuntion$ | $Expression$ {\bf ||} $Conjunction$\\
+$Conjunction$ $\rightarrow$ $Relation$ | $Conjunction$ \&\& $Relation$\\
+$Relation$ $\rightarrow$ $Addition$ |
+
+\hspace{1.5cm} |$Relation$ {\bf <} $Addition$ | $Relation$ {\bf <=} $Addition$ |
+
+\hspace{1.5cm} |$Relation$ {\bf >} $Addition$ | $Relation$ {\bf >=} $Addition$ |
+
+\hspace{1.5cm} |$Relation$ {\bf ==} $Addition$ | $Relation$ {\bf !=} $Addition$\\ 
+$Addition$ $\rightarrow$  $Term$ | $Addition$ {\bf +} $Term$ | $Addition$ {\bf -} $Term$\\
+$Term$ $\rightarrow$ $Negation$ | $Term$ {\bf *} $Negation$ | $Term$ {\bf /} $Negation$\\
+$Negation$ $\rightarrow$ $Factor$ | {\bf !} $Factor$\\
+$Factor$ $\rightarrow$ $Identifier$ | $Literal$ | {\bf (} $Expression$ {\bf )}\\
+
+Ahora vamos a eliminar las recursiones a izquierda como las de la producion $Declarations$, $Identifiers$, $Statements$, $Expression$, $Conjunction$, $Relation$, $Addition$, $Term$:
+
+\noindent$Declarations$ $\rightarrow$ $(Declaration)^{*}$\\
+$Identifiers$ $\rightarrow$ $Identifier$ ({\bf ,}$Identifier)^{*}$\\
+$Statements$ $\rightarrow$ $Statement^{*}$\\
+$Expression$ $\rightarrow$ $Conjuntion$ ({\bf ||} $Conjunction$)$^{*}$\\
+$Conjunction$ $\rightarrow$ $Relation$ (\&\& $Relation$)$^{*}$\\
+$Relation$ $\rightarrow$ $Addition$ ($Comparison$ $Addition$)$^{*}$\\
+$Comparison$ $\rightarrow$ {\bf <} | {\bf <=} | {\bf >} | {\bf >=} | {\bf ==} | {\bf !=}\\
+$Addition$ $\rightarrow$  $Term$ ($Sums$ $Term$)$^{*}$\\
+$Sums$ $\rightarrow$ {\bf +} | {\bf -}\\
+$Term$ $\rightarrow$ $Negation$ ($Mult$ $Negation$)$^{*}$\\
+$Mult$ $\rightarrow$ {\bf *} | {\bf /}\\
+
+Note que para poder extender la producción $Relation$, $Addition$ y $Term$ tuvimos que agregar tres producciones auxiliares, $Comparison$, $Sums$ y $Mult$ respectivamente. Además como $Declarations$ y $Statements$ llaman a otra produccion ninguna o muchas veces, vamos a eliminar estas dos producciones y colocar en su reemplazo el lado derecho del mismo.
+Pasemos ahora a colocar los $?$ que es otro caracter que extiende la gramatica original y me va a reducir un poco mas lo que ya tengo. Agregaremos este símbolo en las siguientes producciones:
+
+\noindent$IfStatement$ $\rightarrow$ {\bf if(} $Expression$ {\bf )} $Statement$ ({\bf else} $Statement$)$?$\\
+$Negation$ $\rightarrow$ ({\bf !})$?$ $Factor$\\
+$Comparison$ $\rightarrow$ {\bf <}({\bf =})$?$ | {\bf >}({\bf =})$?$  | {\bf ==} | {\bf !=}\\
+
+
+Veamos como quedan todos estos cambios al ponerlos todos juntos
+
+\noindent$Program$ $\rightarrow$ {\bf void main ( )} {\bf \{}$Declaration^{*}$ $Statement^{*}${\bf \} } \\
+$Declaration$ $\rightarrow$ $Type$ $Indentifiers$ {\bf ;}\\
+$Type$ $\rightarrow$ {\bf int} | {\bf boolean}\\
+$Identifiers$ $\rightarrow$ $Identifier$ ({\bf ,}$Identifier)^{*}$\\
+$Statement$ $\rightarrow$ {\bf ;} | $Block$ | $Assignment$ | $IfStatement$ | $WhileStatement$\\
+$Block$ $\rightarrow$ {\bf \{}$Statement^{*}${\bf \}}\\
+$Assignment$ $\rightarrow$ $Identifier$ {\bf =} $Expression$ {\bf ;}\\
+$IfStatement$ $\rightarrow$ {\bf if(} $Expression$ {\bf )} $Statement$ ({\bf else} $Statement$)$?$\\
+$WhileStatement$ $\rightarrow$ {\bf while(}$Expression$ {\bf )} $Statement$\\
+$Expression$ $\rightarrow$ $Conjuntion$ ({\bf ||} $Conjunction$)$^{*}$\\
+$Conjunction$ $\rightarrow$ $Relation$ (\&\& $Relation$)$^{*}$\\
+$Relation$ $\rightarrow$ $Addition$ ($Comparison$ $Addition$)$^{*}$\\
+$Comparison$ $\rightarrow$ {\bf <}({\bf =})$?$ | {\bf >}({\bf =})$?$  | {\bf ==} | {\bf !=}\\
+$Addition$ $\rightarrow$  $Term$ ($Sums$ $Term$)$^{*}$\\
+$Sums$ $\rightarrow$ {\bf +} | {\bf -}\\
+$Term$ $\rightarrow$ $Negation$ ($Mult$ $Negation$)$^{*}$\\
+$Mult$ $\rightarrow$ {\bf *} | {\bf /}\\
+$Negation$ $\rightarrow$ ({\bf !})$?$ $Factor$\\
+$Factor$ $\rightarrow$ $Identifier$ | $Literal$ | {\bf (} $Expression$ {\bf )}\\
+
+
+Lo que nosotros elegimos como herramienta para hacer el trabajo práctico fue usar Javacc en el lenguaje Java. Al
+tener esta gramática definida pasamos a definir un archivo Jay.jj que se encargará de leer esta gramatica y darnos el parser
+deseado.
+
+\subsection{Traducción dirigida por sintaxis}
+
+Ahora a la gramática vamos a tener que agregarle atributos para obtener luego de parsear todo el código Jay un código HTML.
+
+Para mas detalle de esto, ver el código en Jay.jj.
+
+
+

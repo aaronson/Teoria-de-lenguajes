@@ -1,0 +1,305 @@
+options {
+	STATIC = false ;
+}
+
+PARSER_BEGIN(JayParser)
+package tleng.tp.grammar;
+
+
+public class JayParser {
+	/*
+	static void main( String[] args ) throws ParseException, TokenMgrError {
+		JayParser parser = new JayParser( System.in ) ;
+		parser.Start() ; 
+	}
+	*/
+	
+	public static String html_final = "</body>\n</html>";
+	public static String codigo_inicial = " \t<div class = \"CodeBlock\"> \n";
+	public static String codigo_final = " \t</div> \n";
+	
+	public static String html = "";
+
+	public static String nueva_linea = "\t<br/> \n";
+
+static String getSpanOper(Token token){
+	String str = token.image;
+    return " \t<span class = \"Op\">" + str + "</span> \n";
+}
+
+static String getSpanKey(Token token){
+	String str = token.image;
+    return " \t<span class = \"Key\">" + str + "</span> \n";
+}
+
+static String getSpanLit(Token token){
+	String str = token.image;
+    return " \t<span class = \"Lit\">" + str + "</span> \n";
+}
+
+static String getSpanSep(Token token){
+	String str = token.image;
+    String result = " \t<span class = \"Sep\">" + str + "</span> \n";
+    if ("{".equals(str)){
+    	return result + codigo_inicial + "\n";
+   	} else if ("}".equals(str)){
+   		return codigo_final + "\n" + result;
+   	} else if (";".equals(str)){
+   		return result + nueva_linea;
+   	} else {
+   		return result;
+   	}  
+}
+
+static String getSpanId(Token token){
+	String str = token.image;
+    return " \t<span class = \"Id\">" + str + "</span> \n";
+}
+
+}
+PARSER_END(JayParser)
+
+/******************************************************************************
+ * TOKENS                                                                     *
+ ******************************************************************************/
+SKIP : { " " }
+SKIP : { "\n" | "\r" | "\r\n" | "\t" }
+
+//TOKEN: {<IDENTIFIER> | <KEYWORD> | <LITERAL> | <SEPARATOR> | <OPERATOR> }
+
+//KEYWORD
+TOKEN: { < KWBOOLEAN : "boolean"> }
+TOKEN: { <KWELSE : "else" > }
+TOKEN: { <KWIF : "if" > }
+TOKEN: { <KWINT : "int" > }
+TOKEN: { <KWMAIN : "main" > }
+TOKEN: { <KWVOID : "void" > }
+TOKEN: { <KWWHILE : "while" > }
+
+//LITERAL
+TOKEN: { <LITERAL : <BOOLEAN> | <INTEGER> > }
+TOKEN: { <BOOLEAN: ("true" | "false") > }
+TOKEN: { <INTEGER : (["0"-"9"])+ > }
+//SEPARATOR -> "(" | ")" | "{" | "}" | ";" | ","
+TOKEN: { <LL_A: "{" > }
+TOKEN: { <LL_C: "}" > }
+TOKEN: { <PAR_A: "(" > }
+TOKEN: { <PAR_C: ")" > }
+TOKEN: { <PTOCOMA: ";" > }
+TOKEN: { <COMA: "," > }
+
+//IDENTIFIER
+TOKEN : { <IDENTIFIER : <LETRA>(<LETRA>|<DIGITO>)*> }
+TOKEN : { <#LETRA : ["a"-"z", "A"-"Z"]> }
+TOKEN : { <#DIGITO : ["0"-"9"]> }
+
+//OPERATOR -> =(=)? | + | - | * | / | <(=)? | >(=)? | !(=)? | && | ||
+TOKEN: { <OASSIGN: "=" > }
+TOKEN: { <OPLUS: "+" > }
+TOKEN: { <OMINUS: "-" > }
+TOKEN: { <OSTAR: "*" > }
+TOKEN: { <OSLASH: "/" > }
+TOKEN: { <OMENOR: "<" > }
+TOKEN: { <OMAYOR: ">" > }
+TOKEN: { <OADMIRACION: "!" > }
+TOKEN: { <OAND: "&&" > }
+TOKEN: { <OOR: "||" > }
+  
+/******************************************************************************
+ * PRODUCTIONS                                                                *
+ ******************************************************************************/
+
+String Program() :
+/* Variable declarations */
+{
+	Token token;
+  	html += "<html> \n <head> \n <link href=\"jay.css\" rel=\"stylesheet\" type=\"text/css\"> \n </head> \n <body> \n";
+}
+
+/* start productions */
+{
+	token = <KWVOID>    {html += getSpanKey(token);}
+	token = <KWMAIN>    {html += getSpanKey(token);}
+	token = <PAR_A>     {html += getSpanSep(token);}
+	token = <PAR_C>     {html += getSpanSep(token);}
+	token = <LL_A>      {html += getSpanSep(token);}
+	(Declaration())* 
+	(Statement())*
+	token = <LL_C>      {html += getSpanSep(token);}
+	<EOF> { html += html_final; System.out.println(html); return html; }
+}
+void Declaration():
+{}
+{
+	Type()
+	Identifiers()
+	token = <PTOCOMA> {html += getSpanSep(token);} 
+}
+void Type():
+{}
+{
+	token = <KWINT>  {html += getSpanKey(token);} |  
+	token = <KWBOOLEAN> {html += getSpanKey(token);}
+}
+void Identifiers():
+{}
+{
+	token = <IDENTIFIER> {html += getSpanId(token);} 
+	(
+		token = <COMA>	 {html += getSpanSep(token);}
+		token = <IDENTIFIER> {html += getSpanId(token); }
+	)* 
+}
+
+void Statement(): 
+{}
+{
+	token = <PTOCOMA> {html += getSpanSep(token);} | 
+	Block() |
+	Assignment() |
+	IfStatement() |
+	WhileStatement()
+}
+
+void Block():
+{}
+{
+	token = <LL_A>	{html += getSpanSep(token);}
+	(Statement())*
+	token = <LL_C>  {html += getSpanSep(token);}
+}
+
+void Assignment():
+{}
+{
+	token = <IDENTIFIER> 	{html += getSpanId(token);}
+	token = <OASSIGN>		{html += getSpanOper(token);}
+	Expression()
+	token = <PTOCOMA>		{html += getSpanSep(token);}
+	
+}
+
+void IfStatement():
+{}
+{
+	token = <KWIF>			{html += getSpanKey(token);}
+	token = <PAR_A>			{html += getSpanSep(token);}
+	Expression()	
+	token = <PAR_C>			{html += getSpanSep(token);}
+	Statement()
+	(
+		token = <KWELSE>	{html += getSpanKey(token);}
+		Statement()
+	)?
+
+}
+
+void WhileStatement():
+{}
+{
+	token = <KWWHILE>		{html += getSpanKey(token);}
+	token = <PAR_A>			{html += getSpanSep(token);}
+	Expression()
+	token = <PAR_C>			{html += getSpanSep(token);}
+	Statement()
+}
+
+void Expression():
+{}
+{
+	Conjunction()
+	(
+		token = <OOR>		{html += getSpanOper(token);}
+		Conjunction()
+	)*
+}
+
+void Conjunction():
+{}
+{
+	Relation()
+	(
+		token = <OAND> 		{html += getSpanOper(token);}
+		Relation()
+	)*
+}
+
+void Relation():
+{}
+{
+	Addition()
+	(
+		Comparison()
+		Addition()
+	)*
+}
+
+void Comparison():
+{}
+{
+	token = <OMENOR>		{html += getSpanOper(token);}
+	(token = <OASSIGN>)?   {html += getSpanOper(token);} |	
+	token = <OMAYOR>		{html += getSpanOper(token);}
+	(token = <OASSIGN>)? {html += getSpanOper(token);}  |	
+	token = <OASSIGN>		{html += getSpanOper(token);}
+	token = <OASSIGN>   {html += getSpanOper(token);}   |		
+	token = <OADMIRACION>	{html += getSpanOper(token);}
+	token = <OASSIGN>		{html += getSpanOper(token);}
+}
+
+void Addition():
+{}
+{
+	Term()
+	(
+		Sums()
+		Term()
+	)*
+}
+
+void Sums():
+{}
+{
+	token = <OPLUS> {html += getSpanOper(token);}   | 
+	token = <OMINUS>	{html += getSpanOper(token);}
+}
+
+void Term():
+{}
+{
+	Negation()
+	(
+		Mult()
+		Negation()
+	)*
+}
+
+void Mult():
+{}
+{
+	token = <OSTAR>   {html += getSpanOper(token);} |		
+	token = <OSLASH>		{html += getSpanOper(token);}
+}
+
+void Negation():
+{}
+{
+	(
+		token =<OADMIRACION> {html += getSpanOper(token);}
+	)?
+	Factor()
+
+}
+
+void Factor():
+{}
+{
+	token = <IDENTIFIER> {html += getSpanId(token);} |	
+	token = <LITERAL> {html += getSpanLit(token);} | 	
+	token = <PAR_A> 		{html += getSpanSep(token);}
+	Expression() 
+	token = <PAR_C>			{html += getSpanSep(token);}
+}
+	
+
+	
